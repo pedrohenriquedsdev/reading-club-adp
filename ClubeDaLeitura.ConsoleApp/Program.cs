@@ -1,9 +1,17 @@
-﻿namespace ClubeDaLeitura.ConsoleApp
+﻿using ClubeDaLeitura.ConsoleApp.Apresentacao;
+using ClubeDaLeitura.ConsoleApp.Dominio;
+using ClubeDaLeitura.ConsoleApp.Infraestrutura;
+
+namespace ClubeDaLeitura.ConsoleApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
+            RepositorioCaixa repositorioCaixa = new RepositorioCaixa();
+
+            TelaCaixa telaCaixa = new TelaCaixa(repositorioCaixa);
+
             while (true)
             {
                 Console.Clear();
@@ -29,9 +37,27 @@
                 {
                     string? opcaoMenuInterno = string.Empty;
 
-                    if (opcaoMenuPrincipal == "1")
+                    if (opcaoMenuPrincipal == "1") //caixas
                     {
+                        opcaoMenuInterno = telaCaixa.ObterOpcaoMenu();
 
+                        if(opcaoMenuInterno == "S")
+                        {
+                            Console.Clear();
+                            break;
+                        }
+
+                        if (opcaoMenuInterno == "1")
+                            telaCaixa.Cadastrar();
+
+                        else if (opcaoMenuInterno == "2")
+                            telaCaixa.Editar();
+
+                        else if (opcaoMenuInterno == "3")
+                            telaCaixa.Excluir();
+
+                        else if (opcaoMenuInterno == "4")
+                            telaCaixa.VisualizarTodos();
                     }
 
                     else if (opcaoMenuPrincipal == "2")

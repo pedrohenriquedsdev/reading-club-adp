@@ -20,8 +20,8 @@ public class TelaRevista : TelaBase
             ExibirCabecalho("Visualização de Revistas");
 
         Console.WriteLine(
-            "{0, -7} | {1, -25} | {2, -6} | {3, -4} | {4, -15}",
-            "Id", "Título", "Edição", "Ano", "Caixa"
+            "{0, -7} | {1, -25} | {2, -6} | {3, -4} | {4, -15} | {5, -12}",
+            "Id", "Título", "Edição", "Ano", "Caixa", "Status"
         );
 
         EntidadeBase?[] revistas = repositorioRevista.SelecionarTodas();
@@ -42,15 +42,24 @@ public class TelaRevista : TelaBase
 
             if (corSelecionada == "Vermelho")
                 Console.ForegroundColor = ConsoleColor.Red;
-
             else if (corSelecionada == "Verde")
                 Console.ForegroundColor = ConsoleColor.Green;
-
             else if (corSelecionada == "Azul")
                 Console.ForegroundColor = ConsoleColor.Blue;
 
             Console.Write("{0, -15}", r.Caixa.Etiqueta);
+            Console.ResetColor();
 
+            Console.Write(" | ");
+
+            if (r.Status == "Disponível")
+                Console.ForegroundColor = ConsoleColor.Green;
+            else if (r.Status == "Emprestada")
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            else if (r.Status == "Reservada")
+                Console.ForegroundColor = ConsoleColor.Cyan;
+
+            Console.Write("{0, -12}", r.Status);
             Console.ResetColor();
             Console.WriteLine();
         }
@@ -74,7 +83,6 @@ public class TelaRevista : TelaBase
         Console.Write("Digite o ano de publicação: ");
         int anoPublicacao = Convert.ToInt32(Console.ReadLine());
 
-        // Visualizar as Caixas disponívels
         string idSelecionado = SelecionarCaixa();
 
         Caixa? caixaSelecionada = (Caixa?)repositorioCaixa.SelecionarPorId(idSelecionado);
@@ -104,10 +112,8 @@ public class TelaRevista : TelaBase
 
             if (corSelecionada == "Vermelho")
                 Console.ForegroundColor = ConsoleColor.Red;
-
             else if (corSelecionada == "Verde")
                 Console.ForegroundColor = ConsoleColor.Green;
-
             else if (corSelecionada == "Azul")
                 Console.ForegroundColor = ConsoleColor.Blue;
 
@@ -118,8 +124,6 @@ public class TelaRevista : TelaBase
         }
 
         Console.ResetColor();
-
-        // Selecionar uma caixa por ID
         Console.WriteLine("---------------------------------");
 
         string? idSelecionado;

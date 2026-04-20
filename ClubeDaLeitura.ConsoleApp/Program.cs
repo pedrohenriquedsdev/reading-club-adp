@@ -2,12 +2,19 @@
 using ClubeDaLeitura.ConsoleApp.Dominio;
 using ClubeDaLeitura.ConsoleApp.Infraestrutura;
 
+// Repositórios
 RepositorioCaixa repositorioCaixa = new RepositorioCaixa();
 RepositorioRevista repositorioRevista = new RepositorioRevista();
+RepositorioAmigo repositorioAmigo = new RepositorioAmigo();
+RepositorioEmprestimo repositorioEmprestimo = new RepositorioEmprestimo();
 
-TelaCaixa telaCaixa = new TelaCaixa(repositorioCaixa);
+// Telas
+TelaCaixa telaCaixa = new TelaCaixa(repositorioCaixa, repositorioRevista);
 TelaRevista telaRevista = new TelaRevista(repositorioRevista, repositorioCaixa);
+TelaAmigo telaAmigo = new TelaAmigo(repositorioAmigo, repositorioEmprestimo);
+TelaEmprestimo telaEmprestimo = new TelaEmprestimo(repositorioEmprestimo, repositorioAmigo, repositorioRevista);
 
+// Dados de exemplo
 Caixa caixa = new Caixa("Lançamentos", "Vermelho", 3);
 repositorioCaixa.Cadastrar(caixa);
 
@@ -85,14 +92,57 @@ while (true)
                 telaRevista.VisualizarTodos(deveExibirCabecalho: true);
         }
 
-        else if (opcaoMenuPrincipal == "3")
+        else if (opcaoMenuPrincipal == "3") // Amigos
         {
+            opcaoMenuInterno = telaAmigo.ObterOpcaoMenuAmigo();
 
+            if (opcaoMenuInterno == "S")
+            {
+                Console.Clear();
+                break;
+            }
+
+            if (opcaoMenuInterno == "1")
+                telaAmigo.Cadastrar();
+
+            else if (opcaoMenuInterno == "2")
+                telaAmigo.Editar();
+
+            else if (opcaoMenuInterno == "3")
+                telaAmigo.Excluir();
+
+            else if (opcaoMenuInterno == "4")
+                telaAmigo.VisualizarTodos(deveExibirCabecalho: true);
+
+            else if (opcaoMenuInterno == "5")
+                telaAmigo.VisualizarEmprestimosDoAmigo();
         }
 
-        else if (opcaoMenuPrincipal == "4")
+        else if (opcaoMenuPrincipal == "4") // Empréstimos
         {
+            opcaoMenuInterno = telaEmprestimo.ObterOpcaoMenuEmprestimo();
 
+            if (opcaoMenuInterno == "S")
+            {
+                Console.Clear();
+                break;
+            }
+
+            if (opcaoMenuInterno == "1")
+                telaEmprestimo.RegistrarEmprestimo();
+
+            else if (opcaoMenuInterno == "2")
+                telaEmprestimo.RegistrarDevolucao();
+
+            else if (opcaoMenuInterno == "3")
+                telaEmprestimo.VisualizarAbertos();
+
+            else if (opcaoMenuInterno == "4")
+                telaEmprestimo.VisualizarTodos(deveExibirCabecalho: true);
+        }
+        else
+        {
+            break;
         }
     }
 }

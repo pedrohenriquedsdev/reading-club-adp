@@ -7,6 +7,7 @@ namespace ClubeDaLeitura.ConsoleApp.Dominio;
             ○ Número da edição (número positivo)
             ○ Ano de publicação (ano válido)
             ○ Caixa (seleção obrigatória)
+        ● Status possíveis: Disponível / Emprestada / Reservada
 */
 public class Revista : EntidadeBase
 {
@@ -14,6 +15,7 @@ public class Revista : EntidadeBase
     public int NumeroEdicao { get; set; }
     public int AnoPublicacao { get; set; }
     public Caixa Caixa { get; set; }
+    public string Status { get; set; } = "Disponível";
 
     public Revista(string titulo, int numeroEdicao, int anoPublicacao, Caixa caixa)
     {
@@ -29,7 +31,6 @@ public class Revista : EntidadeBase
 
         if (string.IsNullOrWhiteSpace(Titulo))
             erros += "O campo \"Título\" é obrigatório;";
-
         else if (Titulo.Length < 2 || Titulo.Length > 100)
             erros += "O campo \"Título\" deve conter entre 2 e 100 caracteres;";
 
@@ -55,5 +56,6 @@ public class Revista : EntidadeBase
         NumeroEdicao = revistaAtualizada.NumeroEdicao;
         AnoPublicacao = revistaAtualizada.AnoPublicacao;
         Caixa = revistaAtualizada.Caixa;
+        // Status não é atualizado via edição manual
     }
 }

@@ -6,10 +6,12 @@ namespace ClubeDaLeitura.ConsoleApp.Apresentacao;
 public class TelaCaixa : TelaBase
 {
     private RepositorioCaixa repositorioCaixa;
+    private RepositorioRevista repositorioRevista;
 
-    public TelaCaixa(RepositorioCaixa rC) : base("Caixa", rC)
+    public TelaCaixa(RepositorioCaixa rC, RepositorioRevista rR) : base("Caixa", rC)
     {
         repositorioCaixa = rC;
+        repositorioRevista = rR;
     }
 
     public override void VisualizarTodos(bool deveExibirCabecalho)
@@ -35,10 +37,8 @@ public class TelaCaixa : TelaBase
 
             if (corSelecionada == "Vermelho")
                 Console.ForegroundColor = ConsoleColor.Red;
-
             else if (corSelecionada == "Verde")
                 Console.ForegroundColor = ConsoleColor.Green;
-
             else if (corSelecionada == "Azul")
                 Console.ForegroundColor = ConsoleColor.Blue;
 
@@ -56,6 +56,139 @@ public class TelaCaixa : TelaBase
             Console.WriteLine("Digite ENTER para continuar...");
             Console.ReadLine();
         }
+    }
+
+    public new void Excluir()
+    {
+        ExibirCabecalho("Exclusão de Caixa");
+
+        VisualizarTodos(deveExibirCabecalho: false);
+
+        Console.WriteLine("---------------------------------");
+
+        string? idSelecionado;
+
+        do
+        {
+            Console.Write("Digite o ID do registro que deseja excluir: ");
+            idSelecionado = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
+                break;
+        } while (true);
+
+        if (repositorioRevista.CaixaTemRevistasVinculadas(idSelecionado))
+        {
+            ExibirMensagem("Não é possível excluir esta caixa pois ela possui revistas vinculadas.");
+            return;
+        }
+
+        bool conseguiuExcluir = repositorioCaixa.Excluir(idSelecionado);
+
+        if (!conseguiuExcluir)
+        {
+            ExibirMensagem("Não foi possível encontrar o registro requisitado.");
+            return;
+        }
+
+        ExibirMensagem($"O registro \"{idSelecionado}\" foi excluído com sucesso.");
+    }
+
+    public new void Cadastrar()
+    {
+        ExibirCabecalho("Cadastro de Caixa");
+
+        EntidadeBase novaEntidade = ObterDadosCadastrais();
+
+        string[] erros = novaEntidade.Validar();
+
+        Caixa novaCaixa = (Caixa)novaEntidade;
+
+        if (erros.Length == 0 && repositorioCaixa.EtiquetaJaExiste(novaCaixa.Etiqueta))
+        {
+            erros = new[] { "Já existe uma caixa cadastrada com esta etiqueta." };
+        }
+
+        if (erros.Length > 0)
+        {
+            Console.WriteLine("---------------------------------");
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            for (int i = 0; i < erros.Length; i++)
+                Console.WriteLine(erros[i]);
+
+            Console.ResetColor();
+            Console.WriteLine("---------------------------------");
+            Console.Write("Digite ENTER para continuar...");
+            Console.ReadLine();
+
+            Cadastrar();
+            return;
+        }
+
+        repositorioCaixa.Cadastrar(novaCaixa);
+
+        ExibirMensagem($"O registro \"{novaCaixa.Id}\" foi cadastrado com sucesso!");
+    }
+
+    public new void Editar()
+    {
+        ExibirCabecalho("Edição de Caixa");
+
+        VisualizarTodos(deveExibirCabecalho: false);
+
+        Console.WriteLine("---------------------------------");
+
+        string? idSelecionado;
+
+        do
+        {
+            Console.Write("Digite o ID do registro que deseja editar: ");
+            idSelecionado = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
+                break;
+        } while (true);
+
+        Console.WriteLine("---------------------------------");
+
+        EntidadeBase novaEntidade = ObterDadosCadastrais();
+
+        string[] erros = novaEntidade.Validar();
+
+        Caixa caixaAtualizada = (Caixa)novaEntidade;
+
+        if (erros.Length == 0 && repositorioCaixa.EtiquetaJaExiste(caixaAtualizada.Etiqueta, idSelecionado))
+        {
+            erros = new[] { "Já existe uma caixa cadastrada com esta etiqueta." };
+        }
+
+        if (erros.Length > 0)
+        {
+            Console.WriteLine("---------------------------------");
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            for (int i = 0; i < erros.Length; i++)
+                Console.WriteLine(erros[i]);
+
+            Console.ResetColor();
+            Console.WriteLine("---------------------------------");
+            Console.Write("Digite ENTER para continuar...");
+            Console.ReadLine();
+
+            Editar();
+            return;
+        }
+
+        bool conseguiuEditar = repositorioCaixa.Editar(idSelecionado, caixaAtualizada);
+
+        if (!conseguiuEditar)
+        {
+            ExibirMensagem("Não foi possível encontrar o registro requisitado.");
+            return;
+        }
+
+        ExibirMensagem($"O registro \"{idSelecionado}\" foi editado com sucesso.");
     }
 
     protected override EntidadeBase ObterDadosCadastrais()
@@ -92,8 +225,6 @@ public class TelaCaixa : TelaBase
         Console.Write("Informe o tempo de empréstimo das revistas da caixa: ");
         int diasDeEmprestimo = Convert.ToInt32(Console.ReadLine());
 
-        Caixa novaCaixa = new Caixa(etiqueta, cor, diasDeEmprestimo);
-
-        return novaCaixa;
+        return new Caixa(etiqueta, cor, diasDeEmprestimo);
     }
 }

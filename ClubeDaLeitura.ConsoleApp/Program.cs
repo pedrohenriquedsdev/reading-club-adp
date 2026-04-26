@@ -1,11 +1,15 @@
 ﻿using ClubeDaLeitura.ConsoleApp.Dominio;
+using ClubeDaLeitura.ConsoleApp.Apresentacao;
 
 namespace ClubeDaLeitura.ConsoleApp
+
 {
     internal class Program
     {
         static void Main(string[] args)
         {
+            TelaCaixa telaCaixa = new TelaCaixa();
+
             while (true)
             {
                 Console.Clear();
@@ -33,7 +37,33 @@ namespace ClubeDaLeitura.ConsoleApp
 
                     if (opcaoMenuPrincipal == "1")
                     {
+                        opcaoMenuInterno = telaCaixa.ObterOpcaoMenu();
 
+                        if (opcaoMenuInterno == "S")
+                        {
+                            Console.Clear();
+                            break;
+                        }
+
+                        if (opcaoMenuInterno == "1")
+                        {
+                            telaCaixa.Cadastrar();
+                        }
+
+                        else if (opcaoMenuInterno == "2")
+                        {
+                            telaCaixa.Editar();
+                        }
+
+                        else if (opcaoMenuInterno == "3")
+                        {
+                            telaCaixa.Excluir();
+                        }
+
+                        else if (opcaoMenuInterno == "4")
+                        {
+                            telaCaixa.VisualizarTodos();
+                        }
                     }
 
                     else if (opcaoMenuPrincipal == "2")

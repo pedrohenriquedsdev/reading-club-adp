@@ -1,4 +1,6 @@
-﻿namespace ClubeDaLeitura.ConsoleApp
+﻿using ClubeDaLeitura.ConsoleApp.Dominio;
+
+namespace ClubeDaLeitura.ConsoleApp
 {
     internal class Program
     {

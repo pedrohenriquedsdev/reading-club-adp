@@ -61,8 +61,6 @@ public class TelaCaixa
             return;
         }
 
-        Console.ResetColor();
-
         repositorioCaixa.Cadastrar(novaCaixa);
 
         ExibirMensagem($"O registro \"{novaCaixa.Id}\" foi cadastrado com sucesso!");
@@ -176,11 +174,24 @@ public class TelaCaixa
             if (c == null)
                 continue;
 
+            string corSelecionada = c.Cor;
+
+            if (corSelecionada == "Vermelho")
+                Console.ForegroundColor = ConsoleColor.Red;
+
+            else if (corSelecionada == "Verde")
+                Console.ForegroundColor = ConsoleColor.Green;
+
+            else if (corSelecionada == "Azul")
+                Console.ForegroundColor = ConsoleColor.Blue;
+
             Console.WriteLine(
                 "{0, -7} | {1, -20} | {2, -10} | {3, -20}",
                 c.Id, c.Etiqueta, c.Cor, c.DiasDeEmprestimo
             );
         }
+
+        Console.ResetColor();
 
         if (deveExibirCabecalho)
         {
@@ -239,7 +250,7 @@ public class TelaCaixa
         Console.WriteLine("---------------------------------");
     }
 
-    private static void ExibirMensagem(string mensagem)
+    private void ExibirMensagem(string mensagem)
     {
         Console.WriteLine("---------------------------------");
         Console.WriteLine(mensagem);

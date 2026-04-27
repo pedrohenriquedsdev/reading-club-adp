@@ -26,21 +26,7 @@ public class RepositorioCaixa
 
     public bool Editar(string idSelecionado, Caixa novaCaixa)
     {
-        Caixa? caixaSelecionada = null;
-
-        for (int i = 0; i < caixas.Length; i++)
-        {
-            Caixa? c = caixas[i];
-
-            if (c == null)
-                continue;
-
-            if (c.Id == idSelecionado)
-            {
-                caixaSelecionada = c;
-                break;
-            }
-        }
+        Caixa? caixaSelecionada = SelecionarPorId(idSelecionado);
 
         if (caixaSelecionada == null)
             return false;
@@ -67,5 +53,26 @@ public class RepositorioCaixa
         }
 
         return false;
+    }
+
+    public Caixa? SelecionarPorId(string idSelecionado)
+    {
+        Caixa? caixaSelecionada = null;
+
+        for (int i = 0; i < caixas.Length; i++)
+        {
+            Caixa? c = caixas[i];
+
+            if (c == null)
+                continue;
+
+            if (c.Id == idSelecionado)
+            {
+                caixaSelecionada = c;
+                break;
+            }
+        }
+
+        return caixaSelecionada;
     }
 }

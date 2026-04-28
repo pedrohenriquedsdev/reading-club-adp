@@ -14,6 +14,12 @@ repositorioCaixa.Cadastrar(caixa);
 Revista revista = new Revista("Action Comics", 155, 1990, caixa);
 repositorioRevista.Cadastrar(revista);
 
+//polimorfismo
+EntidadeBase entidade = caixa;
+
+entidade.AtualizarRegistro(new Caixa("Teste", "Vermelho", 5));
+
+
 while (true)
 {
     Console.Clear();

@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-
 namespace ClubeDaLeitura.ConsoleApp.Dominio;
 
 /*
@@ -12,28 +10,22 @@ namespace ClubeDaLeitura.ConsoleApp.Dominio;
     ● Cada caixa define o prazo máximo para empréstimo de suas revistas
 */
 // Encapsulamento
-public class Caixa
+public class Caixa : EntidadeBase
 {
-    public string Id { get; set; } = string.Empty; // propriedade
-    public string Etiqueta { get; set; } = string.Empty; // propriedade
-    public string Cor { get; set; } = string.Empty; // propriedade
-    public int DiasDeEmprestimo { get; set; } = 7;  // propriedade
+    public string Etiqueta { get; set; } = string.Empty;
+    public string Cor { get; set; } = string.Empty;
+    public int DiasDeEmprestimo { get; set; } = 7;
 
     // construtor de classe
     // toda instância que for criada PRECISA dessas informações
     public Caixa(string etiqueta, string cor, int diasDeEmprestimo)
     {
-        Id = Convert
-                .ToHexString(RandomNumberGenerator.GetBytes(20))
-                .ToLower()
-                .Substring(0, 7);
-
         Etiqueta = etiqueta;
         Cor = cor;
         DiasDeEmprestimo = diasDeEmprestimo;
     }
 
-    public string[] Validar()
+    public override string[] Validar()
     {
         string erros = string.Empty;
 
@@ -55,8 +47,12 @@ public class Caixa
         return erros.Split(';', StringSplitOptions.RemoveEmptyEntries); // separar
     }
 
-    public void AtualizarRegistro(Caixa caixaAtualizada)
+    // substituição = implementação do método abstração
+    public override void AtualizarRegistro(EntidadeBase entidadeAtualizada)
     {
+        // (Caixa) = confia
+        Caixa caixaAtualizada = (Caixa)entidadeAtualizada; // cast / conversão de tipo
+
         Etiqueta = caixaAtualizada.Etiqueta;
         Cor = caixaAtualizada.Cor;
         DiasDeEmprestimo = caixaAtualizada.DiasDeEmprestimo;

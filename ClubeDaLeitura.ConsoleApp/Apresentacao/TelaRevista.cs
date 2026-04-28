@@ -74,12 +74,92 @@ public class TelaRevista
 
     public void Editar()
     {
+        ExibirCabecalho("Edição de Revista");
+
+        VisualizarTodos(deveExibirCabecalho: false);
+
+        Console.WriteLine("---------------------------------");
+
+        string? idSelecionado;
+
+        do
+        {
+            Console.Write("Digite o ID do registro que deseja editar: ");
+            idSelecionado = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
+                break;
+        } while (true);
+
+        Console.WriteLine("---------------------------------");
+
+        Revista novaRevista = ObterDadosCadastrais();
+
+        string[] erros = novaRevista.Validar();
+
+        if (erros.Length > 0)
+        {
+            Console.WriteLine("---------------------------------");
+
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            for (int i = 0; i < erros.Length; i++)
+            {
+                string erro = erros[i];
+
+                Console.WriteLine(erro);
+            }
+
+            Console.ResetColor();
+            Console.WriteLine("---------------------------------");
+            Console.Write("Digite ENTER para continuar...");
+            Console.ReadLine();
+
+            // Recursão
+            Editar();
+            return;
+        }
+
+        bool conseguiuEditar = repositorioRevista.Editar(idSelecionado, novaRevista);
+
+        if (!conseguiuEditar)
+        {
+            ExibirMensagem("Não foi possível encontrar o registro requisitado.");
+            return;
+        }
+
+        ExibirMensagem($"O registro \"{idSelecionado}\" foi editado com sucesso.");
 
     }
 
     public void Excluir()
     {
+        ExibirCabecalho("Exclusão de Caixa");
 
+        VisualizarTodos(deveExibirCabecalho: false);
+
+        Console.WriteLine("---------------------------------");
+
+        string? idSelecionado;
+
+        do
+        {
+            Console.Write("Digite o ID do registro que deseja excluir: ");
+            idSelecionado = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
+                break;
+        } while (true);
+
+        bool conseguiuExcluir = repositorioRevista.Excluir(idSelecionado);
+
+        if (!conseguiuExcluir)
+        {
+            ExibirMensagem("Não foi possível encontrar o registro requisitado.");
+            return;
+        }
+
+        ExibirMensagem($"O registro \"{idSelecionado}\" foi excluído com sucesso.");
     }
 
     public void VisualizarTodos(bool deveExibirCabecalho)

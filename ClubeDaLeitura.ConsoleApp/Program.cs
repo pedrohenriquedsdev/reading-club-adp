@@ -8,6 +8,7 @@ RepositorioRevista repositorioRevista = new RepositorioRevista();
 TelaCaixa telaCaixa = new TelaCaixa(repositorioCaixa);
 TelaRevista telaRevista = new TelaRevista(repositorioRevista, repositorioCaixa);
 
+//DADOS TESTES
 Caixa caixa = new Caixa("Lançamentos", "Vermelho", 3);
 repositorioCaixa.Cadastrar(caixa);
 

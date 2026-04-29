@@ -1,4 +1,3 @@
-using System;
 using ClubeDaLeitura.ConsoleApp.Dominio;
 
 namespace ClubeDaLeitura.ConsoleApp.Infraestrutura;
@@ -6,7 +5,7 @@ namespace ClubeDaLeitura.ConsoleApp.Infraestrutura;
 public abstract class RepositorioBase
 {
     // protected = visível para classes que herdam essa classe
-    protected EntidadeBase?[] registros = new EntidadeBase[100];
+    protected EntidadeBase?[] registros = new EntidadeBase[100]; // array de registros -> criamos arrays diferentes para diferentes objetos
 
     public void Cadastrar(EntidadeBase entidade)
     {

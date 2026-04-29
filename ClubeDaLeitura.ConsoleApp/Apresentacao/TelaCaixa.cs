@@ -7,7 +7,7 @@ public class TelaCaixa : TelaBase
 {
     private RepositorioCaixa repositorioCaixa;
 
-    public TelaCaixa(RepositorioCaixa rC) : base("Caixa", rC)
+    public TelaCaixa(RepositorioCaixa rC) : base("Caixa", rC) //passando infos para a classe que estamos herdando
     {
         repositorioCaixa = rC;
     }

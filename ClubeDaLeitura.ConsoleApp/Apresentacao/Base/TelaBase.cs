@@ -3,7 +3,7 @@ using ClubeDaLeitura.ConsoleApp.Infraestrutura.Base;
 
 namespace ClubeDaLeitura.ConsoleApp.Apresentacao.Base;
 
-public abstract class TelaBase
+public abstract class TelaBase : ITela
 {
     public string nomeEntidade = string.Empty;
     private RepositorioBase repositorio;
@@ -18,7 +18,7 @@ public abstract class TelaBase
     {
         string nomeMinusculo = nomeEntidade.ToLower();
 
-        Console.Clear();
+        // Console.Clear();
         Console.WriteLine("---------------------------------");
         Console.WriteLine($"Gestão de {nomeEntidade}");
         Console.WriteLine("---------------------------------");

@@ -11,27 +11,22 @@ TelaCaixa telaCaixa = new TelaCaixa(repositorioCaixa);
 TelaRevista telaRevista = new TelaRevista(repositorioRevista, repositorioCaixa);
 TelaAmigo telaAmigo = new TelaAmigo(repositorioAmigo);
 
-<<<<<<< HEAD
-//DADOS TESTES
-=======
 // 2. Criação de dados teste
->>>>>>> v4
+
 Caixa caixa = new Caixa("Lançamentos", "Vermelho", 3);
 repositorioCaixa.Cadastrar(caixa);
 
 Revista revista = new Revista("Action Comics", 155, 1990, caixa);
 repositorioRevista.Cadastrar(revista);
 
-<<<<<<< HEAD
 //POLIMORFISMO
 EntidadeBase entidade = caixa;
 
 entidade.AtualizarRegistro(new Caixa("Teste", "Vermelho", 5));
 
-=======
 Amigo amigo = new Amigo("Joãozinho", "Dona Cleide", "49 98222-4353");
 repositorioAmigo.Cadastrar(amigo);
->>>>>>> v4
+
 
 // 3. Loop principal
 while (true)

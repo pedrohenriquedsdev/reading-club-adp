@@ -1,5 +1,5 @@
-using ClubeDaLeitura.ConsoleApp.Dominio;
 using ClubeDaLeitura.ConsoleApp.Infraestrutura;
+using ClubeDaLeitura.ConsoleApp.Dominio;
 
 namespace ClubeDaLeitura.ConsoleApp.Apresentacao;
 

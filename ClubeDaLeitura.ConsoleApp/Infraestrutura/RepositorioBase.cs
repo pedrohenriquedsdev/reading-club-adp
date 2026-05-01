@@ -1,10 +1,11 @@
-using ClubeDaLeitura.ConsoleApp.Dominio.Base;
+using ClubeDaLeitura.ConsoleApp.Dominio;
 
-namespace ClubeDaLeitura.ConsoleApp.Infraestrutura.Base;
+namespace ClubeDaLeitura.ConsoleApp.Infraestrutura;
 
 public abstract class RepositorioBase
 {
-    protected EntidadeBase?[] registros = new EntidadeBase[100];
+    // protected = visível para classes que herdam essa classe
+    protected EntidadeBase?[] registros = new EntidadeBase[100]; // array de registros -> criamos arrays diferentes para diferentes objetos
 
     public void Cadastrar(EntidadeBase entidade)
     {
@@ -16,6 +17,11 @@ public abstract class RepositorioBase
                 break;
             }
         }
+    }
+
+    public EntidadeBase?[] SelecionarTodas()
+    {
+        return registros;
     }
 
     public bool Editar(string idSelecionado, EntidadeBase entidade)
@@ -68,10 +74,5 @@ public abstract class RepositorioBase
         }
 
         return entidadeSelecionada;
-    }
-
-    public EntidadeBase?[] SelecionarTodos()
-    {
-        return registros;
     }
 }

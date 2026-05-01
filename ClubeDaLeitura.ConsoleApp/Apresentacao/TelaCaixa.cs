@@ -1,6 +1,4 @@
-using ClubeDaLeitura.ConsoleApp.Apresentacao.Base;
 using ClubeDaLeitura.ConsoleApp.Dominio;
-using ClubeDaLeitura.ConsoleApp.Dominio.Base;
 using ClubeDaLeitura.ConsoleApp.Infraestrutura;
 
 namespace ClubeDaLeitura.ConsoleApp.Apresentacao;
@@ -9,7 +7,7 @@ public class TelaCaixa : TelaBase
 {
     private RepositorioCaixa repositorioCaixa;
 
-    public TelaCaixa(RepositorioCaixa rC) : base("Caixa", rC)
+    public TelaCaixa(RepositorioCaixa rC) : base("Caixa", rC) //passando infos para a classe que estamos herdando
     {
         repositorioCaixa = rC;
     }
@@ -24,7 +22,7 @@ public class TelaCaixa : TelaBase
             "Id", "Etiqueta", "Cor", "Tempo de Empréstimo"
         );
 
-        EntidadeBase?[] caixas = repositorioCaixa.SelecionarTodos();
+        EntidadeBase?[] caixas = repositorioCaixa.SelecionarTodas();
 
         for (int i = 0; i < caixas.Length; i++)
         {
@@ -63,7 +61,7 @@ public class TelaCaixa : TelaBase
     protected override EntidadeBase ObterDadosCadastrais()
     {
         Console.Write("Informe a etiqueta da caixa: ");
-        string etiqueta = Console.ReadLine() ?? string.Empty;
+        string? etiqueta = Console.ReadLine();
 
         Console.WriteLine("---------------------------------");
         Console.WriteLine("Selecione uma das cores válidas");
@@ -78,7 +76,7 @@ public class TelaCaixa : TelaBase
         Console.WriteLine("---------------------------------");
 
         Console.Write("Informe a cor da caixa: ");
-        string codigoCor = Console.ReadLine() ?? string.Empty;
+        string? codigoCor = Console.ReadLine();
 
         string cor;
 

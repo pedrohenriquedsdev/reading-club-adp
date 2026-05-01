@@ -1,6 +1,4 @@
-using ClubeDaLeitura.ConsoleApp.Apresentacao.Base;
 using ClubeDaLeitura.ConsoleApp.Dominio;
-using ClubeDaLeitura.ConsoleApp.Dominio.Base;
 using ClubeDaLeitura.ConsoleApp.Infraestrutura;
 
 namespace ClubeDaLeitura.ConsoleApp.Apresentacao;
@@ -26,7 +24,7 @@ public class TelaRevista : TelaBase
             "Id", "Título", "Edição", "Ano", "Caixa"
         );
 
-        EntidadeBase?[] revistas = repositorioRevista.SelecionarTodos();
+        EntidadeBase?[] revistas = repositorioRevista.SelecionarTodas();
 
         for (int i = 0; i < revistas.Length; i++)
         {
@@ -68,7 +66,7 @@ public class TelaRevista : TelaBase
     protected override EntidadeBase ObterDadosCadastrais()
     {
         Console.Write("Digite o título da revista: ");
-        string titulo = Console.ReadLine() ?? string.Empty;
+        string? titulo = Console.ReadLine();
 
         Console.Write("Digite o número da edição: ");
         int numeroEdicao = Convert.ToInt32(Console.ReadLine());
@@ -76,12 +74,10 @@ public class TelaRevista : TelaBase
         Console.Write("Digite o ano de publicação: ");
         int anoPublicacao = Convert.ToInt32(Console.ReadLine());
 
+        // Visualizar as Caixas disponívels
         string idSelecionado = SelecionarCaixa();
 
         Caixa? caixaSelecionada = (Caixa?)repositorioCaixa.SelecionarPorId(idSelecionado);
-
-        if (caixaSelecionada == null)
-            throw new NullReferenceException("Não foi possível obter o registro selecionado {Caixa}.");
 
         return new Revista(titulo, numeroEdicao, anoPublicacao, caixaSelecionada);
     }
@@ -95,7 +91,7 @@ public class TelaRevista : TelaBase
           "Id", "Etiqueta", "Cor", "Tempo de Empréstimo"
       );
 
-        EntidadeBase?[] caixas = repositorioCaixa.SelecionarTodos();
+        EntidadeBase?[] caixas = repositorioCaixa.SelecionarTodas();
 
         for (int i = 0; i < caixas.Length; i++)
         {
@@ -123,6 +119,7 @@ public class TelaRevista : TelaBase
 
         Console.ResetColor();
 
+        // Selecionar uma caixa por ID
         Console.WriteLine("---------------------------------");
 
         string? idSelecionado;

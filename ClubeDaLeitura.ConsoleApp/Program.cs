@@ -15,7 +15,7 @@ repositorioCaixa.Cadastrar(caixa);
 Revista revista = new Revista("Action Comics", 155, 1990, caixa);
 repositorioRevista.Cadastrar(revista);
 
-//polimorfismo
+//POLIMORFISMO
 EntidadeBase entidade = caixa;
 
 entidade.AtualizarRegistro(new Caixa("Teste", "Vermelho", 5));
@@ -23,7 +23,7 @@ entidade.AtualizarRegistro(new Caixa("Teste", "Vermelho", 5));
 
 while (true)
 {
-    Console.Clear();
+    //Console.Clear();
     Console.WriteLine("---------------------------------");
     Console.WriteLine("Clube da Leitura");
     Console.WriteLine("---------------------------------");
@@ -38,7 +38,7 @@ while (true)
 
     if (opcaoMenuPrincipal == "S")
     {
-        Console.Clear();
+        //Console.Clear();
         break;
     }
 
@@ -52,7 +52,7 @@ while (true)
 
             if (opcaoMenuInterno == "S")
             {
-                Console.Clear();
+                //Console.Clear();
                 break;
             }
 
@@ -75,7 +75,7 @@ while (true)
 
             if (opcaoMenuInterno == "S")
             {
-                Console.Clear();
+                //Console.Clear();
                 break;
             }
 

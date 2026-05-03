@@ -20,8 +20,8 @@ public class TelaRevista : TelaBase
             ExibirCabecalho("Visualização de Revistas");
 
         Console.WriteLine(
-            "{0, -7} | {1, -25} | {2, -6} | {3, -4} | {4, -15}",
-            "Id", "Título", "Edição", "Ano", "Caixa"
+            "{0, -7} | {1, -25} | {2, -6} | {3, -4} | {4, -10} | {5, -15}",
+            "Id", "Título", "Edição", "Ano", "Status", "Caixa"
         );
 
         EntidadeBase?[] revistas = repositorioRevista.SelecionarTodas();
@@ -37,6 +37,13 @@ public class TelaRevista : TelaBase
             Console.Write("{0, -25} | ", r.Titulo);
             Console.Write("{0, -6} | ", r.NumeroEdicao);
             Console.Write("{0, -4} | ", r.AnoPublicacao);
+
+            string status = r.Status.ToString();
+
+            if (r.Status == StatusRevista.Disponivel)
+                status = "Disponível";
+
+            Console.Write("{0, -10} | ", status);
 
             string corSelecionada = r.Caixa.Cor;
 

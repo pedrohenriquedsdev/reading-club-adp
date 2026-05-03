@@ -1,0 +1,308 @@
+using ClubeDaLeitura.ConsoleApp.Dominio;
+using ClubeDaLeitura.ConsoleApp.Dominio.Base;
+using ClubeDaLeitura.ConsoleApp.Infraestrutura;
+
+namespace ClubeDaLeitura.ConsoleApp.Apresentacao;
+
+public class TelaEmprestimo
+{
+    private RepositorioEmprestimo repositorioEmprestimo;
+    private RepositorioRevista repositorioRevista;
+    private RepositorioAmigo repositorioAmigo;
+
+    public TelaEmprestimo
+    (
+        RepositorioEmprestimo repositorioEmprestimo,
+        RepositorioRevista repositorioRevista,
+        RepositorioAmigo repositorioAmigo
+    )
+    {
+        this.repositorioEmprestimo = repositorioEmprestimo;
+        this.repositorioRevista = repositorioRevista;
+        this.repositorioAmigo = repositorioAmigo;
+    }
+
+    public string? ObterOpcaoMenu()
+    {
+        Console.Clear();
+        Console.WriteLine("---------------------------------");
+        Console.WriteLine($"Gestão de Empréstimos");
+        Console.WriteLine("---------------------------------");
+        Console.WriteLine($"1 - Abrir empréstimo");
+        Console.WriteLine($"2 - Concluir empréstimo");
+        Console.WriteLine($"3 - Visualizar empréstimos");
+        Console.WriteLine("S - Voltar para o início");
+        Console.WriteLine("---------------------------------");
+        Console.Write("> ");
+        string? opcaoMenu = Console.ReadLine()?.ToUpper();
+
+        return opcaoMenu;
+    }
+
+    public void Abrir()
+    {
+        ExibirCabecalho("Abertura de Empréstimo");
+
+        Emprestimo emprestimo = ObterDadosCadastrais();
+
+        string[] erros = emprestimo.Validar();
+
+        if (erros.Length > 0)
+        {
+            Console.WriteLine("---------------------------------");
+
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            for (int i = 0; i < erros.Length; i++)
+            {
+                string erro = erros[i];
+
+                Console.WriteLine(erro);
+            }
+
+            Console.ResetColor();
+            Console.WriteLine("---------------------------------");
+            Console.Write("Digite ENTER para continuar...");
+            Console.ReadLine();
+
+            Abrir();
+            return;
+        }
+
+        emprestimo.Abrir();
+
+        repositorioEmprestimo.Cadastrar(emprestimo);
+
+        ExibirMensagem($"O empréstimo \"{emprestimo.Id}\" foi aberto e cadastrado com sucesso.");
+    }
+
+    public void Concluir()
+    {
+        ExibirCabecalho("Conclusão de Empréstimo");
+
+        VisualizarTodos(deveExibirCabecalho: false);
+
+        Console.WriteLine("---------------------------------");
+
+        Emprestimo? emprestimoSelecionado = null;
+
+        do
+        {
+            Console.Write("Digite o id do empréstimo que deseja concluir: ");
+            string? idSelecionado = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
+                emprestimoSelecionado = repositorioEmprestimo.SelecionarPorId(idSelecionado);
+
+        } while (emprestimoSelecionado == null);
+
+        Console.WriteLine("---------------------------------");
+        Console.WriteLine(
+            "{0, -7} | {1, -15} | {2, -10} | {3, -10} | {4, -15}",
+            "Id", "Revista", "Amigo", "Abertura", "Conclusão Prev."
+        );
+        Console.WriteLine(
+            "{0, -7} | {1, -15} | {2, -10} | {3, -10} | {4, -15}",
+            emprestimoSelecionado.Id, emprestimoSelecionado.Revista.Titulo, emprestimoSelecionado.Amigo.Nome, emprestimoSelecionado.Abertura.ToShortDateString(), emprestimoSelecionado.ConclusaoPrevista.ToShortDateString()
+        );
+        Console.WriteLine("---------------------------------");
+
+        Console.Write("Deseja realmente concluir o empréstimo selecionado? (s/N): ");
+        string? opcaoContinuar = Console.ReadLine()?.ToUpper();
+
+        if (opcaoContinuar != "S")
+        {
+            Console.WriteLine("---------------------------------");
+            Console.WriteLine("Digite ENTER para continuar...");
+            Console.ReadLine();
+            return;
+        }
+
+        emprestimoSelecionado.Concluir();
+
+        ExibirMensagem($"O empréstimo \"{emprestimoSelecionado.Id}\" foi concluído com sucesso.");
+    }
+
+    public void VisualizarTodos(bool deveExibirCabecalho)
+    {
+        if (deveExibirCabecalho)
+            ExibirCabecalho("Visualização de Empréstimos");
+
+        Console.WriteLine(
+            "{0, -7} | {1, -15} | {2, -10} | {3, -10} | {4, -15} | {5, -10}",
+            "Id", "Revista", "Amigo", "Abertura", "Conclusão Prev.", "Status"
+        );
+
+        Emprestimo?[] emprestimos = repositorioEmprestimo.SelecionarTodos();
+
+        for (int i = 0; i < emprestimos.Length; i++)
+        {
+            Emprestimo? e = emprestimos[i];
+
+            if (e == null)
+                continue;
+
+            Console.Write("{0, -7} | ", e.Id);
+            Console.Write("{0, -15} | ", e.Revista.Titulo);
+            Console.Write("{0, -10} | ", e.Amigo.Nome);
+            Console.Write("{0, -10} | ", e.Abertura.ToShortDateString());
+            Console.Write("{0, -15} | ", e.ConclusaoPrevista.ToShortDateString());
+
+            string status = e.Status.ToString();
+
+            if (e.EstaAtrasado)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                status = "Atrasado";
+            }
+            else if (e.Status == StatusEmprestimo.Indefinido)
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+            }
+            else if (e.Status == StatusEmprestimo.Aberto)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            }
+            else if (e.Status == StatusEmprestimo.Concluido)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                status = "Concluído";
+            }
+
+            Console.Write("{0, -10}", status);
+
+            Console.ResetColor();
+            Console.WriteLine();
+        }
+
+        if (deveExibirCabecalho)
+        {
+            Console.WriteLine("---------------------------------");
+            Console.WriteLine("Digite ENTER para continuar...");
+            Console.ReadLine();
+        }
+    }
+
+    private Emprestimo ObterDadosCadastrais()
+    {
+        // 1. Selecionar uma revista disponível
+        VisualizarRevistas();
+
+        Revista? revista = null;
+
+        do
+        {
+            Console.Write("Digite o id da revista que deseja emprestar: ");
+            string? idSelecionado = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
+                revista = (Revista?)repositorioRevista.SelecionarPorId(idSelecionado);
+
+        } while (revista == null);
+
+        // 2. Selecionar um amigo disponível
+        Console.WriteLine("---------------------------------");
+
+        VisualizarAmigos();
+
+        Amigo? amigo = null;
+
+        do
+        {
+            Console.Write("Digite o id do amigo que receberá a revista: ");
+            string? idSelecionado = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
+                amigo = (Amigo?)repositorioAmigo.SelecionarPorId(idSelecionado);
+
+        } while (amigo == null);
+
+        // 3. Gerar um empréstimo
+        return new Emprestimo(revista, amigo);
+    }
+
+    private void VisualizarRevistas()
+    {
+        Console.WriteLine(
+            "{0, -7} | {1, -25} | {2, -6} | {3, -4} | {4, -15}",
+            "Id", "Título", "Edição", "Ano", "Caixa"
+        );
+
+        EntidadeBase?[] revistas = repositorioRevista.SelecionarTodos();
+
+        for (int i = 0; i < revistas.Length; i++)
+        {
+            Revista? r = (Revista?)revistas[i];
+
+            if (r == null)
+                continue;
+
+            Console.Write("{0, -7} | ", r.Id);
+            Console.Write("{0, -25} | ", r.Titulo);
+            Console.Write("{0, -6} | ", r.NumeroEdicao);
+            Console.Write("{0, -4} | ", r.AnoPublicacao);
+
+            string corSelecionada = r.Caixa.Cor;
+
+            if (corSelecionada == "Vermelho")
+                Console.ForegroundColor = ConsoleColor.Red;
+
+            else if (corSelecionada == "Verde")
+                Console.ForegroundColor = ConsoleColor.Green;
+
+            else if (corSelecionada == "Azul")
+                Console.ForegroundColor = ConsoleColor.Blue;
+
+            Console.Write("{0, -15}", r.Caixa.Etiqueta);
+
+            Console.ResetColor();
+            Console.WriteLine();
+        }
+
+        Console.WriteLine("---------------------------------");
+    }
+
+    private void VisualizarAmigos()
+    {
+        Console.WriteLine(
+            "{0, -7} | {1, -15} | {2, -15} | {3, -13}",
+            "Id", "Nome", "Responsável", "Telefone"
+        );
+
+        EntidadeBase?[] amigos = repositorioAmigo.SelecionarTodos();
+
+        for (int i = 0; i < amigos.Length; i++)
+        {
+            Amigo? a = (Amigo?)amigos[i];
+
+            if (a == null)
+                continue;
+
+            Console.WriteLine(
+                "{0, -7} | {1, -15} | {2, -15} | {3, -13}",
+                a.Id, a.Nome, a.NomeResponsavel, a.Telefone
+            );
+        }
+
+        Console.WriteLine("---------------------------------");
+    }
+
+    private void ExibirCabecalho(string titulo)
+    {
+        Console.Clear();
+        Console.WriteLine("---------------------------------");
+        Console.WriteLine($"Gestão de Empréstimos");
+        Console.WriteLine("---------------------------------");
+        Console.WriteLine(titulo);
+        Console.WriteLine("---------------------------------");
+    }
+
+    private void ExibirMensagem(string mensagem)
+    {
+        Console.WriteLine("---------------------------------");
+        Console.WriteLine(mensagem);
+        Console.WriteLine("---------------------------------");
+        Console.Write("Digite ENTER para continuar...");
+        Console.ReadLine();
+    }
+}

@@ -13,6 +13,7 @@ public class Amigo : EntidadeBase
     public string Nome { get; set; } = string.Empty;
     public string NomeResponsavel { get; set; } = string.Empty;
     public string Telefone { get; set; } = string.Empty;
+    public Emprestimo?[] Emprestimos { get; set; } = new Emprestimo[100];
 
     // construtor de classe
     // toda instância que for criada PRECISA dessas informações
@@ -77,5 +78,15 @@ public class Amigo : EntidadeBase
         NomeResponsavel = amigoAtualizado.NomeResponsavel;
         Telefone = amigoAtualizado.Telefone;
     }
+    public void AdicionarEmprestimo(Emprestimo emprestimo)
+    {
+        for (int i = 0; i < Emprestimos.Length; i++)
+        {
+            if (Emprestimos[i] == null)
+            {
+                Emprestimos[i] = emprestimo;
+                break;
+            }
+        }
+    }
 }
-

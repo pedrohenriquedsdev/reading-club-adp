@@ -1,9 +1,10 @@
+using ClubeDaLeitura.ConsoleApp.Apresentacao.Base;
 using ClubeDaLeitura.ConsoleApp.Dominio;
 using ClubeDaLeitura.ConsoleApp.Infraestrutura;
 
 namespace ClubeDaLeitura.ConsoleApp.Apresentacao;
 
-public class TelaEmprestimo
+public class TelaEmprestimo : ITela
 {
     private RepositorioEmprestimo repositorioEmprestimo;
     private RepositorioRevista repositorioRevista;
@@ -23,7 +24,7 @@ public class TelaEmprestimo
 
     public string? ObterOpcaoMenu()
     {
-        Console.Clear();
+        // Console.Clear();
         Console.WriteLine("---------------------------------");
         Console.WriteLine($"Gestão de Empréstimos");
         Console.WriteLine("---------------------------------");

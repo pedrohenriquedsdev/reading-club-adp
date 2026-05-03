@@ -1,5 +1,5 @@
 ﻿using ClubeDaLeitura.ConsoleApp.Apresentacao;
-using ClubeDaLeitura.ConsoleApp.Dominio;
+using ClubeDaLeitura.ConsoleApp.Apresentacao.Base;
 using ClubeDaLeitura.ConsoleApp.Infraestrutura;
 
 // 1. Instanciação de dependências
@@ -8,11 +8,15 @@ RepositorioRevista repositorioRevista = new RepositorioRevista();
 RepositorioAmigo repositorioAmigo = new RepositorioAmigo();
 RepositorioEmprestimo repositorioEmprestimo = new RepositorioEmprestimo();
 
-TelaCaixa telaCaixa = new TelaCaixa(repositorioCaixa);
-TelaRevista telaRevista = new TelaRevista(repositorioRevista, repositorioCaixa);
-TelaAmigo telaAmigo = new TelaAmigo(repositorioAmigo);
-TelaEmprestimo telaEmprestimo = new TelaEmprestimo(repositorioEmprestimo, repositorioRevista, repositorioAmigo);
+TelaPrincipal telaPrincipal = new TelaPrincipal
+(
+    repositorioCaixa,
+    repositorioRevista,
+    repositorioAmigo,
+    repositorioEmprestimo
+);
 
+<<<<<<< HEAD
 // 2. Criação de dados teste
 
 Caixa caixa = new Caixa("Lançamentos", "Vermelho", 3);
@@ -44,19 +48,27 @@ while (true)
     Console.WriteLine("---------------------------------");
     Console.Write("> ");
     string? opcaoMenuPrincipal = Console.ReadLine()?.ToUpper();
+=======
+// 2. Loop do menu principal
+while (true)
+{
+    ITela? telaSelecionada = telaPrincipal.ApresentarMenuOpcoesPrincipal();
+>>>>>>> v6
 
-    if (opcaoMenuPrincipal == "S")
+    if (telaSelecionada == null)
     {
         //Console.Clear();
         break;
     }
 
+    // 3. Loop do menu interno
     while (true)
     {
-        string? opcaoMenuInterno;
+        string? opcaoMenuInterno = telaSelecionada.ObterOpcaoMenu();
 
-        if (opcaoMenuPrincipal == "1") // Caixas
+        if (opcaoMenuInterno == "S")
         {
+<<<<<<< HEAD
             opcaoMenuInterno = telaCaixa.ObterOpcaoMenu();
 
             if (opcaoMenuInterno == "S")
@@ -76,10 +88,15 @@ while (true)
 
             else if (opcaoMenuInterno == "4")
                 telaCaixa.VisualizarTodos(deveExibirCabecalho: true);
+=======
+            Console.Clear();
+            break;
+>>>>>>> v6
         }
 
-        else if (opcaoMenuPrincipal == "2") // Revistas
+        if (telaSelecionada is TelaBase telaBase)
         {
+<<<<<<< HEAD
             opcaoMenuInterno = telaRevista.ObterOpcaoMenu();
 
             if (opcaoMenuInterno == "S")
@@ -88,43 +105,22 @@ while (true)
                 break;
             }
 
+=======
+>>>>>>> v6
             if (opcaoMenuInterno == "1")
-                telaRevista.Cadastrar();
+                telaBase.Cadastrar();
 
             else if (opcaoMenuInterno == "2")
-                telaRevista.Editar();
+                telaBase.Editar();
 
             else if (opcaoMenuInterno == "3")
-                telaRevista.Excluir();
+                telaBase.Excluir();
 
             else if (opcaoMenuInterno == "4")
-                telaRevista.VisualizarTodos(deveExibirCabecalho: true);
+                telaBase.VisualizarTodos(deveExibirCabecalho: true);
         }
 
-        else if (opcaoMenuPrincipal == "3") // Amigos
-        {
-            opcaoMenuInterno = telaAmigo.ObterOpcaoMenu();
-
-            if (opcaoMenuInterno == "S")
-            {
-                Console.Clear();
-                break;
-            }
-
-            if (opcaoMenuInterno == "1")
-                telaAmigo.Cadastrar();
-
-            else if (opcaoMenuInterno == "2")
-                telaAmigo.Editar();
-
-            else if (opcaoMenuInterno == "3")
-                telaAmigo.Excluir();
-
-            else if (opcaoMenuInterno == "4")
-                telaAmigo.VisualizarTodos(deveExibirCabecalho: true);
-        }
-
-        else if (opcaoMenuPrincipal == "4") // Empréstimos
+        else if (telaSelecionada is TelaEmprestimo telaEmprestimo)
         {
             opcaoMenuInterno = telaEmprestimo.ObterOpcaoMenu();
 

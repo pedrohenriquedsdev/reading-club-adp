@@ -3,7 +3,7 @@ using ClubeDaLeitura.ConsoleApp.Dominio;
 
 namespace ClubeDaLeitura.ConsoleApp.Apresentacao;
 
-public abstract class TelaBase
+public abstract class TelaBase : ITela
 {
     public string nomeEntidade = string.Empty;
     private RepositorioBase repositorio;
@@ -14,6 +14,29 @@ public abstract class TelaBase
         this.repositorio = repositorio;
     }
 
+<<<<<<< HEAD
+=======
+    public string? ObterOpcaoMenu()
+    {
+        string nomeMinusculo = nomeEntidade.ToLower();
+
+        // Console.Clear();
+        Console.WriteLine("---------------------------------");
+        Console.WriteLine($"Gestão de {nomeEntidade}");
+        Console.WriteLine("---------------------------------");
+        Console.WriteLine($"1 - Cadastrar {nomeMinusculo}");
+        Console.WriteLine($"2 - Editar {nomeMinusculo}");
+        Console.WriteLine($"3 - Excluir {nomeMinusculo}");
+        Console.WriteLine($"4 - Visualizar {nomeMinusculo}s");
+        Console.WriteLine("S - Voltar para o início");
+        Console.WriteLine("---------------------------------");
+        Console.Write("> ");
+        string? opcaoMenu = Console.ReadLine()?.ToUpper();
+
+        return opcaoMenu;
+    }
+
+>>>>>>> v6
     public void Cadastrar()
     {
         ExibirCabecalho($"Cadastro de {nomeEntidade}");

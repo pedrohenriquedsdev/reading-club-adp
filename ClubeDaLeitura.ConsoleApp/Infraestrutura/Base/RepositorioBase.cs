@@ -19,7 +19,7 @@ public abstract class RepositorioBase
         }
     }
 
-    public EntidadeBase?[] SelecionarTodas()
+    public EntidadeBase?[] SelecionarTodos()
     {
         return registros;
     }

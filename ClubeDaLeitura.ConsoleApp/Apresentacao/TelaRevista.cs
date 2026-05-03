@@ -24,7 +24,7 @@ public class TelaRevista : TelaBase
             "Id", "Título", "Edição", "Ano", "Status", "Caixa"
         );
 
-        EntidadeBase?[] revistas = repositorioRevista.SelecionarTodas();
+        EntidadeBase?[] revistas = repositorioRevista.SelecionarTodos();
 
         for (int i = 0; i < revistas.Length; i++)
         {
@@ -98,7 +98,7 @@ public class TelaRevista : TelaBase
           "Id", "Etiqueta", "Cor", "Tempo de Empréstimo"
       );
 
-        EntidadeBase?[] caixas = repositorioCaixa.SelecionarTodas();
+        EntidadeBase?[] caixas = repositorioCaixa.SelecionarTodos();
 
         for (int i = 0; i < caixas.Length; i++)
         {

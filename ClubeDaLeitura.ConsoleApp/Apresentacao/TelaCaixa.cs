@@ -5,11 +5,11 @@ namespace ClubeDaLeitura.ConsoleApp.Apresentacao;
 
 public class TelaCaixa
 {
-    private RepositorioCaixa repositorioCaixa;
+    private RepositorioCaixa repositorioCaixa; //atributo
 
-    public TelaCaixa(RepositorioCaixa rC)
+    public TelaCaixa(RepositorioCaixa rC) //cosntrutor
     {
-        repositorioCaixa = rC;
+        repositorioCaixa = rC; //setando valor para dentro do atributo
     }
 
     public string? ObterOpcaoMenu()
@@ -52,6 +52,7 @@ public class TelaCaixa
             }
 
             Console.ResetColor();
+
             Console.WriteLine("---------------------------------");
             Console.Write("Digite ENTER para continuar...");
             Console.ReadLine();

@@ -1,22 +1,47 @@
-namespace ClubeDaLeitura.ConsoleApp.Dominio;
+using ClubeDaLeitura.ConsoleApp.Dominio.Base;
 
-/*
-Campos obrigatórios:
-○ Nome (mínimo 3 caracteres, máximo 100)
-○ Nome do responsável (mínimo 3 caracteres, máximo 100)
-○ Telefone (formato validado: 10-11 dígitos)
-    ○ Não pode haver amigos com o mesmo nome e telefone
-*/
+namespace ClubeDaLeitura.ConsoleApp.Dominio;
 
 public class Amigo : EntidadeBase
 {
-    public string Nome { get; set; } = string.Empty;
-    public string NomeResponsavel { get; set; } = string.Empty;
-    public string Telefone { get; set; } = string.Empty;
-    public Emprestimo?[] Emprestimos { get; set; } = new Emprestimo[100];
+    public string Nome { get; private set; } = string.Empty;
+    public string NomeResponsavel { get; private set; } = string.Empty;
+    public string Telefone { get; private set; } = string.Empty;
+    public Emprestimo?[] Emprestimos { get; private set; } = new Emprestimo[100];
+    public Multa?[] Multas { get; set; } = new Multa[100];
 
-    // construtor de classe
-    // toda instância que for criada PRECISA dessas informações
+    public bool ContemEmprestimoAberto
+    {
+        get
+        {
+            for (int i = 0; i < Emprestimos.Length; i++)
+            {
+                Emprestimo? e = Emprestimos[i];
+
+                if (e?.Status == StatusEmprestimo.Aberto)
+                    return true;
+            }
+
+            return false;
+        }
+    }
+
+    public bool ContemMultaAtiva
+    {
+        get
+        {
+            for (int i = 0; i < Multas.Length; i++)
+            {
+                Multa? multa = Multas[i];
+
+                if (multa?.Status == StatusMulta.Ativa)
+                    return true;
+            }
+
+            return false;
+        }
+    }
+
     public Amigo(string nome, string nomeResponsavel, string telefone)
     {
         Nome = nome;
@@ -69,7 +94,6 @@ public class Amigo : EntidadeBase
         return erros.Split(';', StringSplitOptions.RemoveEmptyEntries);
     }
 
-    // substituição = implementação do método abstração
     public override void AtualizarRegistro(EntidadeBase entidadeAtualizada)
     {
         Amigo amigoAtualizado = (Amigo)entidadeAtualizada;
@@ -78,6 +102,7 @@ public class Amigo : EntidadeBase
         NomeResponsavel = amigoAtualizado.NomeResponsavel;
         Telefone = amigoAtualizado.Telefone;
     }
+
     public void AdicionarEmprestimo(Emprestimo emprestimo)
     {
         for (int i = 0; i < Emprestimos.Length; i++)
@@ -88,5 +113,33 @@ public class Amigo : EntidadeBase
                 break;
             }
         }
+    }
+
+    public void RegistrarMulta(Multa multa)
+    {
+        for (int i = 0; i < Multas.Length; i++)
+        {
+            if (Multas[i] == null)
+            {
+                Multas[i] = multa;
+                break;
+            }
+        }
+    }
+
+    public Multa? ObterMultaAtiva()
+    {
+        for (int i = 0; i < Multas.Length; i++)
+        {
+            Multa? m = Multas[i];
+
+            if (m == null)
+                continue;
+
+            if (m.Status == StatusMulta.Ativa)
+                return m;
+        }
+
+        return null;
     }
 }

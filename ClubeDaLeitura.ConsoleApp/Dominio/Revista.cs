@@ -1,20 +1,14 @@
+using ClubeDaLeitura.ConsoleApp.Dominio.Base;
+
 namespace ClubeDaLeitura.ConsoleApp.Dominio;
 
-/*
-    Regras de Negócio:
-        ● Campos obrigatórios:
-            ○ Título (2-100 caracteres)
-            ○ Número da edição (número positivo)
-            ○ Ano de publicação (ano válido)
-            ○ Caixa (seleção obrigatória)
-*/
 public class Revista : EntidadeBase
 {
-    public string Titulo { get; set; }
-    public int NumeroEdicao { get; set; }
-    public int AnoPublicacao { get; set; }
-    public Caixa Caixa { get; set; }
-    public StatusRevista Status { get; set; }
+    public string Titulo { get; private set; }
+    public int NumeroEdicao { get; private set; }
+    public int AnoPublicacao { get; private set; }
+    public Caixa Caixa { get; private set; }
+    public StatusRevista Status { get; private set; }
 
     public Revista(string titulo, int numeroEdicao, int anoPublicacao, Caixa caixa)
     {
@@ -61,6 +55,11 @@ public class Revista : EntidadeBase
     public void Emprestar()
     {
         Status = StatusRevista.Emprestada;
+    }
+
+    public void Reservar()
+    {
+        Status = StatusRevista.Reservada;
     }
 
     public void Devolver()

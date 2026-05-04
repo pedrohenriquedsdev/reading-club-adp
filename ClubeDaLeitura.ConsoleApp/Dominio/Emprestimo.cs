@@ -4,18 +4,18 @@ namespace ClubeDaLeitura.ConsoleApp.Dominio;
 
 public class Emprestimo
 {
-    public string Id { get; set; } = string.Empty;
-    public Revista Revista { get; set; }
-    public Amigo Amigo { get; set; }
-    public StatusEmprestimo Status { get; set; }
-    public DateTime Abertura { get; set; }
-    public DateTime ConclusaoPrevista
+    public string Id { get; private set; } = string.Empty;
+    public Revista Revista { get; private set; }
+    public Amigo Amigo { get; private set; }
+    public StatusEmprestimo Status { get; private set; }
+    public DateTime DataAbertura { get; private set; }
+    public DateTime DataConclusaoPrevista
     {
         get
         {
             int diasDeEmprestimo = Revista.Caixa.DiasDeEmprestimo;
 
-            DateTime conclusao = Abertura.AddDays(diasDeEmprestimo);
+            DateTime conclusao = DataAbertura.AddDays(diasDeEmprestimo);
 
             return conclusao;
         }
@@ -25,14 +25,14 @@ public class Emprestimo
     {
         get
         {
-            return Status == StatusEmprestimo.Aberto && DateTime.Now > ConclusaoPrevista;
+            return Status == StatusEmprestimo.Aberto && DateTime.Now > DataConclusaoPrevista;
         }
     }
 
     public Emprestimo(Revista revista, Amigo amigo)
     {
         Id = Convert
-                .ToHexString(RandomNumberGenerator.GetBytes(20))
+                .ToHexString(RandomNumberGenerator.GetBytes(4))
                 .ToLower()
                 .Substring(0, 7);
 
@@ -47,6 +47,9 @@ public class Emprestimo
         if (Revista == null)
             erros = "O campo \"Revista\" deve ser preenchido;";
 
+        else if (Revista.Status != StatusRevista.Disponivel)
+            erros = "A revista selecionada não está disponível.";
+
         if (Amigo == null)
             erros = "O campo \"Amigo\" deve ser preenchido;";
 
@@ -55,7 +58,7 @@ public class Emprestimo
 
     public void Abrir()
     {
-        Abertura = DateTime.Now;
+        DataAbertura = DateTime.Now;
         Status = StatusEmprestimo.Aberto;
 
         Revista.Emprestar();
@@ -66,5 +69,10 @@ public class Emprestimo
     {
         Status = StatusEmprestimo.Concluido;
         Revista.Devolver();
+    }
+
+    public int ObterQuantidadeDiasAtraso(DateTime dataConclusao)
+    {
+        return (dataConclusao - DataConclusaoPrevista).Days;
     }
 }

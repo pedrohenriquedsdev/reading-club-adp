@@ -5,20 +5,20 @@ using ClubeDaLeitura.ConsoleApp.Infraestrutura;
 
 namespace ClubeDaLeitura.ConsoleApp.Apresentacao;
 
-public class TelaEmprestimo : ITela
+public class TelaReserva : ITela
 {
-    private RepositorioEmprestimo repositorioEmprestimo;
+    private RepositorioReserva repositorioReserva;
     private RepositorioRevista repositorioRevista;
     private RepositorioAmigo repositorioAmigo;
 
-    public TelaEmprestimo
+    public TelaReserva
     (
-        RepositorioEmprestimo repositorioEmprestimo,
+        RepositorioReserva repositorioReserva,
         RepositorioRevista repositorioRevista,
         RepositorioAmigo repositorioAmigo
     )
     {
-        this.repositorioEmprestimo = repositorioEmprestimo;
+        this.repositorioReserva = repositorioReserva;
         this.repositorioRevista = repositorioRevista;
         this.repositorioAmigo = repositorioAmigo;
     }
@@ -27,11 +27,11 @@ public class TelaEmprestimo : ITela
     {
         Console.Clear();
         Console.WriteLine("---------------------------------");
-        Console.WriteLine($"Gestão de Empréstimos");
+        Console.WriteLine($"Gestão de Reservas");
         Console.WriteLine("---------------------------------");
-        Console.WriteLine($"1 - Abrir empréstimo");
-        Console.WriteLine($"2 - Concluir empréstimo");
-        Console.WriteLine($"3 - Visualizar empréstimos");
+        Console.WriteLine($"1 - Iniciar reserva");
+        Console.WriteLine($"2 - Concluir reserva");
+        Console.WriteLine($"3 - Visualizar reservas");
         Console.WriteLine("S - Voltar para o início");
         Console.WriteLine("---------------------------------");
         Console.Write("> ");
@@ -40,13 +40,13 @@ public class TelaEmprestimo : ITela
         return opcaoMenu;
     }
 
-    public void Abrir()
+    public void Iniciar()
     {
-        ExibirCabecalho("Abertura de Empréstimo");
+        ExibirCabecalho("Abertura de Reserva");
 
-        Emprestimo emprestimo = ObterDadosCadastrais();
+        Reserva reserva = ObterDadosCadastrais();
 
-        string[] erros = emprestimo.Validar();
+        string[] erros = reserva.Validar();
 
         if (erros.Length > 0)
         {
@@ -66,15 +66,30 @@ public class TelaEmprestimo : ITela
             Console.Write("Digite ENTER para continuar...");
             Console.ReadLine();
 
-            Abrir();
+            Iniciar();
             return;
         }
 
-        Amigo amigoEmprestimo = emprestimo.Amigo;
+        Amigo amigoReserva = reserva.Amigo;
 
-        if (amigoEmprestimo.ContemMultaAtiva)
+        if (amigoReserva.ContemEmprestimoAberto)
         {
-            Multa multa = amigoEmprestimo.ObterMultaAtiva()!;
+            Console.WriteLine("---------------------------------");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Este amigo contém um empréstimo em aberto...");
+            Console.WriteLine("O empréstimo deve ser concluído antes de uma reserva ser iniciada.");
+            Console.ResetColor();
+            Console.WriteLine("---------------------------------");
+
+            Console.WriteLine("---------------------------------");
+            Console.Write("Digite ENTER para continuar...");
+            Console.ReadLine();
+            return;
+        }
+
+        if (amigoReserva.ContemMultaAtiva)
+        {
+            Multa multa = amigoReserva.ObterMultaAtiva()!;
 
             Console.WriteLine("---------------------------------");
             Console.ForegroundColor = ConsoleColor.Red;
@@ -105,6 +120,9 @@ public class TelaEmprestimo : ITela
             {
                 multa.Quitar();
 
+                Emprestimo emprestimoMulta = multa.Emprestimo;
+                emprestimoMulta.Concluir();
+
                 Console.WriteLine("---------------------------------");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("A multa foi quitada com sucesso!");
@@ -122,39 +140,39 @@ public class TelaEmprestimo : ITela
             }
         }
 
-        emprestimo.Abrir();
+        reserva.Iniciar();
 
-        repositorioEmprestimo.Cadastrar(emprestimo);
+        repositorioReserva.Cadastrar(reserva);
 
-        ExibirMensagem($"O empréstimo \"{emprestimo.Id}\" foi aberto e cadastrado com sucesso.");
+        ExibirMensagem($"A reserva \"{reserva.Id}\" foi iniciada e cadastrada com sucesso.");
     }
 
     public void Concluir()
     {
-        ExibirCabecalho("Conclusão de Empréstimo");
+        ExibirCabecalho("Conclusão de Reserva");
 
-        VisualizarTodos(deveExibirCabecalho: false);
+        VisualizarTodas(deveExibirCabecalho: false);
 
         Console.WriteLine("---------------------------------");
 
-        Emprestimo? emprestimoSelecionado = null;
+        Reserva? reservaSelecionada = null;
 
         do
         {
-            Console.Write("Digite o id do empréstimo que deseja concluir (ou S para sair): ");
+            Console.Write("Digite o id da reserva que deseja concluir (ou S para sair): ");
             string? idSelecionado = Console.ReadLine() ?? string.Empty;
 
             if (idSelecionado.ToUpper() == "S")
                 return;
 
             if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
-                emprestimoSelecionado = repositorioEmprestimo.SelecionarPorId(idSelecionado);
+                reservaSelecionada = repositorioReserva.SelecionarPorId(idSelecionado);
 
-        } while (emprestimoSelecionado == null);
+        } while (reservaSelecionada == null);
 
         Console.WriteLine("---------------------------------");
 
-        Console.Write("Deseja realmente concluir o empréstimo selecionado? (s/N): ");
+        Console.Write("Deseja realmente concluir a reserva selecionada? (s/N): ");
         string? opcaoContinuar = Console.ReadLine()?.ToUpper();
 
         if (opcaoContinuar != "S")
@@ -165,85 +183,50 @@ public class TelaEmprestimo : ITela
             return;
         }
 
-        if (emprestimoSelecionado.EstaAtrasado)
-        {
-            DateTime dataConclusao = DateTime.Now;
+        reservaSelecionada.Concluir();
 
-            Multa multa = new Multa(emprestimoSelecionado, dataConclusao);
-
-            Amigo amigoSelecionado = emprestimoSelecionado.Amigo;
-
-            amigoSelecionado.RegistrarMulta(multa);
-
-            Console.WriteLine("---------------------------------");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Uma multa de atraso foi gerada para este empréstimo.");
-            Console.ResetColor();
-            Console.WriteLine("---------------------------------");
-            Console.WriteLine(
-                "{0, -7} | {1, -12} | {2, -7} | {3, -20} | {4, -10}",
-                "Id", "Ocorrência", "Valor", "Revista", "Status"
-            );
-
-            Console.WriteLine(
-                "{0, -7} | {1, -12} | {2, -7} | {3, -20} | {4, -10}",
-                multa.Id,
-                multa.DataOcorrencia.ToShortDateString(),
-                multa.Valor.ToString("C2"),
-                multa.Emprestimo.Revista.Titulo,
-                multa.Status
-            );
-        }
-
-        emprestimoSelecionado.Concluir();
-
-        ExibirMensagem($"O empréstimo \"{emprestimoSelecionado.Id}\" foi concluído com sucesso.");
+        ExibirMensagem($"A reserva \"{reservaSelecionada.Id}\" foi concluída com sucesso.");
     }
 
-    public void VisualizarTodos(bool deveExibirCabecalho)
+    public void VisualizarTodas(bool deveExibirCabecalho)
     {
         if (deveExibirCabecalho)
-            ExibirCabecalho("Visualização de Empréstimos");
+            ExibirCabecalho("Visualização de Reservas");
 
         Console.WriteLine(
             "{0, -7} | {1, -15} | {2, -10} | {3, -10} | {4, -15} | {5, -10}",
-            "Id", "Revista", "Amigo", "Abertura", "Conclusão Prev.", "Status"
+            "Id", "Revista", "Amigo", "Abertura", "Conclusão.", "Status"
         );
 
-        Emprestimo?[] emprestimos = repositorioEmprestimo.SelecionarTodos();
+        Reserva?[] reservas = repositorioReserva.SelecionarTodos();
 
-        for (int i = 0; i < emprestimos.Length; i++)
+        for (int i = 0; i < reservas.Length; i++)
         {
-            Emprestimo? e = emprestimos[i];
+            Reserva? r = reservas[i];
 
-            if (e == null)
+            if (r == null)
                 continue;
 
-            Console.Write("{0, -7} | ", e.Id);
-            Console.Write("{0, -15} | ", e.Revista.Titulo);
-            Console.Write("{0, -10} | ", e.Amigo.Nome);
-            Console.Write("{0, -10} | ", e.DataAbertura.ToShortDateString());
-            Console.Write("{0, -15} | ", e.DataConclusaoPrevista.ToShortDateString());
+            Console.Write("{0, -7} | ", r.Id);
+            Console.Write("{0, -15} | ", r.Revista.Titulo);
+            Console.Write("{0, -10} | ", r.Amigo.Nome);
+            Console.Write("{0, -10} | ", r.DataInicio.ToShortDateString());
+            Console.Write("{0, -15} | ", r.DataConclusao?.ToShortDateString());
 
-            string status = e.Status.ToString();
+            string status = r.Status.ToString();
 
-            if (e.EstaAtrasado)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                status = "Atrasado";
-            }
-            else if (e.Status == StatusEmprestimo.Indefinido)
+            if (r.Status == StatusReserva.Indefinido)
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
             }
-            else if (e.Status == StatusEmprestimo.Aberto)
+            else if (r.Status == StatusReserva.Ativa)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
             }
-            else if (e.Status == StatusEmprestimo.Concluido)
+            else if (r.Status == StatusReserva.Concluida)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                status = "Concluído";
+                status = "Concluída";
             }
 
             Console.Write("{0, -10}", status);
@@ -260,7 +243,7 @@ public class TelaEmprestimo : ITela
         }
     }
 
-    private Emprestimo ObterDadosCadastrais()
+    private Reserva ObterDadosCadastrais()
     {
         // 1. Selecionar uma revista disponível
         VisualizarRevistas();
@@ -269,7 +252,7 @@ public class TelaEmprestimo : ITela
 
         do
         {
-            Console.Write("Digite o id da revista que deseja emprestar: ");
+            Console.Write("Digite o id da revista que deseja reservar: ");
             string? idSelecionado = Console.ReadLine();
 
             if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
@@ -286,7 +269,7 @@ public class TelaEmprestimo : ITela
 
         do
         {
-            Console.Write("Digite o id do amigo que receberá a revista: ");
+            Console.Write("Digite o id do amigo que reservará a revista: ");
             string? idSelecionado = Console.ReadLine();
 
             if (!string.IsNullOrWhiteSpace(idSelecionado) && idSelecionado.Length == 7)
@@ -295,7 +278,7 @@ public class TelaEmprestimo : ITela
         } while (amigo == null);
 
         // 3. Gerar um empréstimo
-        return new Emprestimo(revista, amigo);
+        return new Reserva(revista, amigo);
     }
 
     private void VisualizarRevistas()

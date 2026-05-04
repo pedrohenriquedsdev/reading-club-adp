@@ -1,22 +1,19 @@
 using System.Security.Cryptography;
 
-namespace ClubeDaLeitura.ConsoleApp.Dominio;
+namespace ClubeDaLeitura.ConsoleApp.Dominio.Base;
 
-// classe abstrata = não pode ser instanciada
-// só vai **definir** comportamentos e propriedades dentro do sistema
 public abstract class EntidadeBase
 {
-    public string Id { get; set; } = string.Empty;
+    public string Id { get; private set; } = string.Empty;
 
     public EntidadeBase()
     {
         Id = Convert
-                .ToHexString(RandomNumberGenerator.GetBytes(20))
+                .ToHexString(RandomNumberGenerator.GetBytes(4))
                 .ToLower()
                 .Substring(0, 7);
     }
 
-    // definição abstrata
     public abstract string[] Validar();
     public abstract void AtualizarRegistro(EntidadeBase entidadeAtualizada);
 }
